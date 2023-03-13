@@ -6,10 +6,10 @@
 #include "SHTSensor.h"
 #include <Adafruit_BMP280.h>
 
-#define pumpPin_1 26
-#define pumpPin_2 13
-#define colPin_1  27
-#define colPin_2  32
+#define pumpPin_1 27
+#define pumpPin_2 32
+#define colPin_1  26
+#define colPin_2  13
 #define Channel_1 1
 #define Channel_2 2
 #define Channel_3 3
@@ -35,15 +35,15 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
   while ( !Serial ) delay(100); 
-  Serial.println(F("BMP280 Sensor event test"));
+  // Serial.println(F("BMP280 Sensor event test"));
   Wire.begin(21,22);
 
-  if (sht.init()) {
-      Serial.print("init(): success\n");
-  } else {
-      Serial.print("init(): failed\n");
-  }
-  sht.setAccuracy(SHTSensor::SHT_ACCURACY_MEDIUM); // only supported by SHT3x
+  // if (sht.init()) {
+  //     Serial.print("init(): success\n");
+  // } else {
+  //     Serial.print("init(): failed\n");
+  // }
+  // sht.setAccuracy(SHTSensor::SHT_ACCURACY_MEDIUM); // only supported by SHT3x
 
   if (!ads.begin(0x48)) {
     Serial.println("Failed to initialize ADS.");
@@ -68,22 +68,13 @@ void setup() {
   ledcAttachPin(pumpPin_2,Channel_2);
   ledcAttachPin(colPin_1,Channel_3);
   ledcAttachPin(colPin_2,Channel_4);
-  // ledcAttachPin(25,Channel_5);
 
-  ledcWrite(Channel_1,160);
+  ledcWrite(Channel_1,255);
   ledcWrite(Channel_2,0);
   ledcWrite(Channel_3,110);
   ledcWrite(Channel_4,0);
 
-  // ledcWrite(Channel_5, 128);
-  // pinMode(26, OUTPUT);
-  // pinMode(33,OUTPUT);
-  // pinMode(34,INPUT);
-  // pinMode(25,OUTPUT);
-
-  // ledcSetup(0, 5000, 8);
-  // ledcAttachPin(33, 0);
-  dacWrite(25, 210);
+  // dacWrite(25, 210);
 
   Setpoint = 5500;
   myPID.SetMode(AUTOMATIC);  
@@ -97,7 +88,7 @@ long pwm_write;
 void loop() {
   Input = ads.readADC_SingleEnded(3);
   myPID.Compute();
-  ledcWrite(Channel_1, Output);
+  ledcWrite(Channel_3, Output);
 
   
   // for(int i =0; i<255;i++){
@@ -117,11 +108,7 @@ void loop() {
   //   adc0 = raw - (int)(150*((128.0-Output)/128));
   //   Serial.print(raw);Serial.print(",");Serial.print(ads.readADC_SingleEnded(1));Serial.print(",");Serial.print(Output);Serial.print(",");Serial.println(ads.readADC_SingleEnded(3));
   // }
-  
-  if (sht.readSample()) {
-    Serial.print(sht.getHumidity(), 2);
-    Serial.print(",");
-    Serial.print(sht.getTemperature(), 2);
+    Serial.print(Output);
     Serial.print(",");
     Serial.print(ads.readADC_SingleEnded(0));
     Serial.print(",");
@@ -130,7 +117,6 @@ void loop() {
     Serial.print(ads.readADC_SingleEnded(2));
     Serial.print(",");
     Serial.println(ads.readADC_SingleEnded(3));
-  }
   delay(10);
   // Serial.print(ads.readADC_SingleEnded(0));Serial.print(",");Serial.print(ads.readADC_SingleEnded(1));Serial.print(",");Serial.print(Output);Serial.print(",");Serial.println(Input);
  

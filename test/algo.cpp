@@ -94,4 +94,12 @@ void loop(){
         Serial.println(average[i]);
     }
     delay(1000);
+
+    //calculate resistance of the sensor in a voltage divider, given load resistsance is 47k and input voltage is 3.3V
+    double load_resistance = 47000;
+    double input_voltage = 3.3;
+    double sensor_resistance = 0;
+    double sensor_voltage = 0;
+    sensor_voltage = ads.computevolts(ads.readsingledend(0));
+    sensor_resistance = (load_resistance * input_voltage)/sensor_voltage - load_resistance;
 }
